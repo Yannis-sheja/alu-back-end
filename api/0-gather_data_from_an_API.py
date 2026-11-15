@@ -4,8 +4,15 @@
 import requests
 import sys
 
-if __name__ == "main":
-    employee_id = sys.argv[1]
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        sys.exit(1)
+
+    try:
+        employee_id = int(sys.argv[1])
+    except ValueError:
+        sys.exit(1)
+
     base = "https://jsonplaceholder.typicode.com"
 
     user = requests.get("{}/users/{}".format(base, employee_id)).json()
