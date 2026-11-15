@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-""" Gathering data from REST API and display an employee's TODO list progress"""
-
+"""
+Script that fetches TODO list progress for a given employee ID from an API
+"""
 import requests
 import sys
 
@@ -13,17 +14,28 @@ if __name__ == "__main__":
     except ValueError:
         sys.exit(1)
 
-    base = "https://jsonplaceholder.typicode.com"
+    base_url = "https://jsonplaceholder.typicode.com"
+    user_response = requests.get("{}/users/{}".format(base_url,
+                                                      employee_id))
+    todos_response = requests.get("{}/todos?userId={}".format(base_url,
+                                                              employee_id))
 
-    user = requests.get("{}/users/{}".format(base, employee_id)).json()
+    if (
+        user_response.status_code != 200
+        or todos_response.status_code != 200
+    ):
+        sys.exit(1)
 
-    todos = requests.get("{}/todos".format(base), param={"userId": employee_id}).json()
+    user_data = user_response.json()
+    todos_data = todos_response.json()
 
-    tasks_done = [task for task in todos if task.get("Completed")]
+    employee_name = user_data.get("name")
+    total_tasks = len(todos_data)
+    completed_tasks = [task for task in todos_data if task.get("completed")]
+    num_completed = len(completed_tasks)
 
     print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), len(tasks_done), len(todos)))
+        employee_name, num_completed, total_tasks))
 
-    for task in tasks_done:
+    for task in completed_tasks:
         print("\t {}".format(task.get("title")))
-
