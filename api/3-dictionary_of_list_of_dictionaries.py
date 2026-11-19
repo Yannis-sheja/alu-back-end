@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     result = {}
     for task in todos:
-        user_id = task.get("user_id")
+        user_id = task.get("userId")
         entry = {}
         entry["username"] = usernames.get(user_id)
         entry["task"] = task.get("title")
